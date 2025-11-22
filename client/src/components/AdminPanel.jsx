@@ -5,6 +5,8 @@ import { Download, Trash2, Filter, Search } from 'lucide-react';
 const AdminPanel = () => {
     const [candidates, setCandidates] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 20;
 
     useEffect(() => {
         fetchCandidates();
@@ -123,55 +125,73 @@ const AdminPanel = () => {
                                 <td colSpan="5" style={{ padding: '2.5rem', textAlign: 'center', color: '#6B7280' }}>No candidates found.</td>
                             </tr>
                         ) : (
-                            candidates.map((candidate) => (
-                                <tr key={candidate.id} style={{ transition: 'background-color 0.2s ease' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                                    <td style={tableCellStyle}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                            <div style={avatarStyle}>
-                                                {candidate.name.charAt(0)}
+                            (() => {
+                                const indexOfLastItem = currentPage * itemsPerPage;
+                                const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+                                const currentItems = candidates.slice(indexOfFirstItem, indexOfLastItem);
+
+                                return currentItems.map((candidate) => (
+                                    <tr key={candidate.id} style={{ transition: 'background-color 0.2s ease' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                                        <td style={tableCellStyle}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                <div style={avatarStyle}>
+                                                    {candidate.name.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <div style={{ fontWeight: '600', color: '#111827' }}>{candidate.name}</div>
+                                                    <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>{candidate.email}</div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <div style={{ fontWeight: '600', color: '#111827' }}>{candidate.name}</div>
-                                                <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>{candidate.email}</div>
+                                        </td>
+                                        <td style={tableCellStyle}>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+                                                {candidate.skills.slice(0, 3).map((skill, i) => (
+                                                    <span key={i} style={skillTagStyle}>
+                                                        {skill}
+                                                    </span>
+                                                ))}
+                                                {candidate.skills.length > 3 && (
+                                                    <span style={{ fontSize: '0.75rem', color: '#9CA3AF', alignSelf: 'center', paddingLeft: '0.25rem' }}>+{candidate.skills.length - 3}</span>
+                                                )}
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td style={tableCellStyle}>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
-                                            {candidate.skills.slice(0, 3).map((skill, i) => (
-                                                <span key={i} style={skillTagStyle}>
-                                                    {skill}
-                                                </span>
-                                            ))}
-                                            {candidate.skills.length > 3 && (
-                                                <span style={{ fontSize: '0.75rem', color: '#9CA3AF', alignSelf: 'center', paddingLeft: '0.25rem' }}>+{candidate.skills.length - 3}</span>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td style={{ ...tableCellStyle, fontSize: '0.875rem', color: '#4B5563' }}>{candidate.experience_years} Years</td>
-                                    <td style={{ ...tableCellStyle, fontSize: '0.875rem', color: '#4B5563' }}>{candidate.location}</td>
-                                    <td style={{ ...tableCellStyle, textAlign: 'right' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                                            <button style={actionButtonStyle} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F3F4F6'; e.currentTarget.style.color = '#2563EB' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#6B7280' }}>
-                                                <Download size={16} />
-                                            </button>
-                                            <button style={actionButtonStyle} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F3F4F6'; e.currentTarget.style.color = '#DC2626' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#6B7280' }}>
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
+                                        </td>
+                                        <td style={{ ...tableCellStyle, fontSize: '0.875rem', color: '#4B5563' }}>{candidate.experience_years} Years</td>
+                                        <td style={{ ...tableCellStyle, fontSize: '0.875rem', color: '#4B5563' }}>{candidate.location}</td>
+                                        <td style={{ ...tableCellStyle, textAlign: 'right' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                                                <button style={actionButtonStyle} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F3F4F6'; e.currentTarget.style.color = '#2563EB' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#6B7280' }}>
+                                                    <Download size={16} />
+                                                </button>
+                                                <button style={actionButtonStyle} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F3F4F6'; e.currentTarget.style.color = '#DC2626' }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#6B7280' }}>
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ));
+                            })()
                         )}
                     </tbody>
                 </table>
             </div>
 
             <div className="flex-between" style={{ marginTop: '1rem', padding: '0 0.25rem', fontSize: '0.875rem', color: '#6B7280' }}>
-                <div>Showing {candidates.length} results</div>
+                <div>Showing {Math.min((currentPage - 1) * itemsPerPage + 1, candidates.length)}-{Math.min(currentPage * itemsPerPage, candidates.length)} of {candidates.length} results</div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button style={{ padding: '0.25rem 0.75rem', border: '1px solid #D1D5DB', borderRadius: '4px', backgroundColor: 'white', cursor: 'not-allowed', opacity: 0.6 }} disabled>Previous</button>
-                    <button style={{ padding: '0.25rem 0.75rem', border: '1px solid #D1D5DB', borderRadius: '4px', backgroundColor: 'white', cursor: 'not-allowed', opacity: 0.6 }} disabled>Next</button>
+                    <button
+                        style={{ padding: '0.25rem 0.75rem', border: '1px solid #D1D5DB', borderRadius: '4px', backgroundColor: 'white', cursor: currentPage === 1 ? 'not-allowed' : 'pointer', opacity: currentPage === 1 ? 0.6 : 1 }}
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        style={{ padding: '0.25rem 0.75rem', border: '1px solid #D1D5DB', borderRadius: '4px', backgroundColor: 'white', cursor: currentPage >= Math.ceil(candidates.length / itemsPerPage) ? 'not-allowed' : 'pointer', opacity: currentPage >= Math.ceil(candidates.length / itemsPerPage) ? 0.6 : 1 }}
+                        disabled={currentPage >= Math.ceil(candidates.length / itemsPerPage)}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
         </div>
