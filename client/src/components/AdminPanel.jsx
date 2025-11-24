@@ -261,7 +261,7 @@ const AdminPanel = () => {
         <div style={{ marginTop: '2.5rem' }}>
             <div className="flex-between mb-6" style={{ alignItems: 'flex-end' }}>
                 <div>
-                    <h1 className="page-title" style={{ marginBottom: '0.25rem' }}>Database</h1>
+                    <h1 className="page-title" style={{ marginBottom: '0.25rem', color: '#2d4899' }}>Database</h1>
                     <p className="page-subtitle">Manage your candidate pool.</p>
                 </div>
 

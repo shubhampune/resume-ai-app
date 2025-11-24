@@ -32,18 +32,21 @@ const ChatSearch = () => {
         top: '1rem',
         zIndex: 10,
         marginBottom: '2.5rem',
-        padding: '0.5rem',
-        backgroundColor: 'white'
+        padding: '0',
+        backgroundColor: 'transparent',
+        border: 'none',
+        boxShadow: 'none'
     };
 
     const searchInputStyle = {
-        width: '100%',
+        flex: 1,
         border: 'none',
         backgroundColor: 'transparent',
-        fontSize: '1.125rem',
-        padding: '1rem 1rem 1rem 3.5rem',
+        fontSize: '1rem',
+        padding: '0 1.5rem',
         outline: 'none',
-        color: '#111827'
+        color: '#111827',
+        fontWeight: '400'
     };
 
     const resultCardStyle = {
@@ -58,7 +61,7 @@ const ChatSearch = () => {
         width: '48px',
         height: '48px',
         borderRadius: '50%',
-        background: 'linear-gradient(135deg, #3B82F6 0%, #4F46E5 100%)',
+        background: 'linear-gradient(135deg, #2d4899 0%, #4F46E5 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -80,37 +83,91 @@ const ChatSearch = () => {
 
     return (
         <div style={{ maxWidth: '900px', margin: '2.5rem auto 0' }}>
-            <div className="page-header">
-                <h1 className="page-title">Candidate Search</h1>
-                <p className="page-subtitle">
+            {/* Content Box */}
+            <div style={{
+                backgroundColor: '#F9FAFB',
+                padding: '2rem',
+                borderRadius: '10px',
+                marginBottom: '2rem',
+                border: '1px solid #E5E7EB'
+            }}>
+                <h1 style={{
+                    fontSize: '2rem',
+                    fontWeight: '700',
+                    color: '#2d4899',
+                    marginBottom: '0.5rem'
+                }}>
+                    Candidate Search
+                </h1>
+                <p style={{
+                    fontSize: '1rem',
+                    color: '#6B7280',
+                    marginBottom: '1.5rem'
+                }}>
                     Find the perfect candidate using natural language queries.
                 </p>
-            </div>
 
-            {/* Search Input */}
-            <div className="card" style={searchCardStyle}>
-                <form onSubmit={handleSearch} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <div style={{ position: 'absolute', left: '1rem', pointerEvents: 'none', display: 'flex' }}>
-                        <Search color="#9CA3AF" size={24} />
-                    </div>
-                    <input
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="e.g. Find me a React Developer in Bangalore with 3 years experience..."
-                        style={searchInputStyle}
-                    />
-                    <div style={{ paddingRight: '0.5rem' }}>
+                {/* Search Input */}
+                <div className="card" style={searchCardStyle}>
+                    <form
+                        onSubmit={handleSearch}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            backgroundColor: 'white',
+                            border: '3px solid #4da83c',
+                            borderRadius: '5px',
+                            overflow: 'hidden',
+                            boxShadow: '0 4px 12px rgba(77, 168, 60, 0.15)'
+                        }}
+                    >
+                        <input
+                            type="text"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="Find a civil engineer with 5 years in EPC projects"
+                            style={searchInputStyle}
+                        />
                         <button
                             type="submit"
                             disabled={loading || !query.trim()}
-                            className="btn-primary"
-                            style={{ padding: '0.6rem 1.5rem', borderRadius: '8px' }}
+                            style={{
+                                padding: '1rem 2rem',
+                                backgroundColor: '#4da83c',
+                                border: 'none',
+                                cursor: loading || !query.trim() ? 'not-allowed' : 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.5rem',
+                                transition: 'background-color 0.2s',
+                                fontSize: '1rem',
+                                fontWeight: '600',
+                                color: 'white'
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!loading && query.trim()) {
+                                    e.currentTarget.style.backgroundColor = '#3d8a30';
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = '#4da83c';
+                            }}
                         >
-                            {loading ? <Loader2 size={18} className="animate-spin" /> : 'Search'}
+                            {loading ? (
+                                <>
+                                    <Loader2 size={20} color="white" className="animate-spin" />
+                                    <span>Searching...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Search size={20} color="white" />
+                                    <span>Search</span>
+                                </>
+                            )}
                         </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
 
             {/* Results */}

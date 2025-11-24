@@ -83,7 +83,7 @@ const UploadZone = () => {
     const dropzoneStyle = {
         border: `2px dashed ${isDragActive ? 'var(--accent-primary)' : '#D1D5DB'}`,
         backgroundColor: isDragActive ? 'var(--accent-light)' : '#F9FAFB',
-        borderRadius: '12px',
+        borderRadius: '10px',
         padding: '3rem',
         cursor: 'pointer',
         display: 'flex',
@@ -127,7 +127,7 @@ const UploadZone = () => {
     return (
         <div style={{ maxWidth: '800px', margin: '2.5rem auto 0' }}>
             <div className="page-header">
-                <h1 className="page-title">Import Resumes</h1>
+                <h1 className="page-title" style={{ color: '#2d4899' }}>Import Resumes</h1>
                 <p className="page-subtitle">
                     Upload multiple candidate resumes (PDF, DOCX) to parse and add them to the database.
                 </p>

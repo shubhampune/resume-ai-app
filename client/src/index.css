@@ -15,7 +15,7 @@
   --text-on-sidebar: #D1D5DB;
 
   /* Accents */
-  --accent-primary: #52b240;
+  --accent-primary: #4da83c;
   /* User Green - Buttons */
   --accent-hover: #419130;
   /* Darker Green */
@@ -25,7 +25,7 @@
   /* Light Blue for backgrounds */
 
   /* Status */
-  --success: #52b240;
+  --success: #4da83c;
   /* User Green */
   --error: #EF4444;
 
@@ -213,12 +213,12 @@ button {
 .card {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 10px;
   box-shadow: var(--shadow-sm);
 }
 
 .btn-primary {
-  background-color: var(--accent-primary);
+  background-color: #4da83c;
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -232,13 +232,12 @@ button {
 }
 
 .btn-primary:hover {
-  background-color: var(--accent-hover);
+  background-color: #3d8a30;
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
 .btn-primary:disabled {
-  opacity: 0.7;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;

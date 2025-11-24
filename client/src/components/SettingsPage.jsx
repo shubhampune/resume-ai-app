@@ -338,7 +338,7 @@ const SettingsPage = () => {
                 }}>
                     <div style={{
                         backgroundColor: 'white',
-                        borderRadius: '12px',
+                        borderRadius: '10px',
                         padding: '2rem',
                         maxWidth: '400px',
                         width: '90%',

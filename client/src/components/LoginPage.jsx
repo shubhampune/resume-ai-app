@@ -85,7 +85,7 @@ const LoginPage = () => {
         width: '100%',
         maxWidth: '400px',
         backgroundColor: 'white',
-        borderRadius: '12px',
+        borderRadius: '10px',
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         padding: '2.5rem'
     };
@@ -94,7 +94,7 @@ const LoginPage = () => {
         width: '48px',
         height: '48px',
         backgroundColor: '#2563EB',
-        borderRadius: '12px',
+        borderRadius: '10px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
