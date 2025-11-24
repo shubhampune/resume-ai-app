@@ -6,6 +6,7 @@ import UploadZone from './components/UploadZone';
 import ChatSearch from './components/ChatSearch';
 import AdminPanel from './components/AdminPanel';
 import LoginPage from './components/LoginPage';
+import SettingsPage from './components/SettingsPage';
 import './index.css';
 
 const SidebarLink = ({ to, icon: Icon, label }) => {
@@ -23,37 +24,133 @@ const SidebarLink = ({ to, icon: Icon, label }) => {
   );
 };
 
+import logo from './assets/logo.png';
+
 const Sidebar = () => {
   const { logout, user } = useAuth();
+  const [showProfileMenu, setShowProfileMenu] = React.useState(false);
+  const profileRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setShowProfileMenu(false);
+      }
+    };
+
+    if (showProfileMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showProfileMenu]);
 
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <div className="logo-box">
-          <FileText className="text-white" size={20} color="white" />
+        <div className="logo-box" style={{ backgroundColor: 'transparent', width: 'auto', height: 'auto' }}>
+          <img src={logo} alt="ResumeAI Logo" style={{ height: '40px', width: 'auto' }} />
         </div>
-        <span className="app-title">ResumeAI</span>
       </div>
 
       <div className="sidebar-nav">
-        <div className="nav-section-title">Main Menu</div>
         <SidebarLink to="/" icon={Upload} label="Import Resume" />
         <SidebarLink to="/search" icon={Search} label="Candidate Search" />
         <SidebarLink to="/admin" icon={LayoutDashboard} label="Database" />
-
-        <div className="nav-section-title">System</div>
-        <SidebarLink to="#" icon={Settings} label="Settings" />
       </div>
 
       <div className="sidebar-footer">
-        <div style={{ marginBottom: '1rem', padding: '0 1rem', fontSize: '0.875rem', color: '#9CA3AF' }}>
-          Signed in as <br />
-          <span style={{ color: 'white', fontWeight: '600' }}>{user?.name}</span>
+        <div className="user-profile-section" style={{ position: 'relative' }} ref={profileRef}>
+          <div
+            className="user-profile-trigger"
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.75rem',
+              cursor: 'pointer',
+              borderRadius: '8px',
+              transition: 'background-color 0.2s'
+            }}
+          >
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              backgroundColor: '#3B82F6',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: '600',
+              fontSize: '0.875rem'
+            }}>
+              {user?.name?.charAt(0) || 'U'}
+            </div>
+            <div style={{ flex: 1, overflow: 'hidden' }}>
+              <div style={{ fontSize: '0.875rem', fontWeight: '500', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                Admin
+              </div>
+            </div>
+          </div>
+
+          {showProfileMenu && (
+            <div className="profile-menu" style={{
+              position: 'absolute',
+              bottom: '100%',
+              left: '0',
+              width: '100%',
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06)',
+              border: '1px solid #E5E7EB',
+              marginBottom: '0.5rem',
+              overflow: 'hidden',
+              zIndex: 50
+            }}>
+              <Link
+                to="/settings"
+                className="menu-item"
+                onClick={() => setShowProfileMenu(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  padding: '0.75rem 1rem',
+                  color: '#374151',
+                  textDecoration: 'none',
+                  transition: 'background-color 0.2s'
+                }}
+              >
+                <Settings size={18} />
+                <span style={{ fontSize: '0.875rem' }}>Settings</span>
+              </Link>
+              <button
+                onClick={logout}
+                className="menu-item"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  padding: '0.75rem 1rem',
+                  width: '100%',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  color: '#EF4444',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s',
+                  textAlign: 'left'
+                }}
+              >
+                <LogOut size={18} />
+                <span style={{ fontSize: '0.875rem' }}>Sign Out</span>
+              </button>
+            </div>
+          )}
         </div>
-        <button onClick={logout} className="logout-btn">
-          <LogOut size={20} />
-          <span>Sign Out</span>
-        </button>
       </div>
     </aside>
   );
@@ -98,6 +195,12 @@ function App() {
           <Route path="/admin" element={
             <ProtectedRoute>
               <AdminPanel />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <SettingsPage />
             </ProtectedRoute>
           } />
         </Routes>

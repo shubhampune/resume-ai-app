@@ -105,7 +105,8 @@ button {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  border-bottom: 1px solid var(--border-sidebar);
+  border-bottom: 1px solid var(--border-color);
+  background-color: white;
 }
 
 .logo-box {
@@ -323,4 +324,13 @@ button {
 
 .mt-8 {
   margin-top: 2rem;
+}
+
+/* --- User Profile Section --- */
+.user-profile-trigger:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.menu-item:hover {
+  background-color: #F3F4F6;
 }

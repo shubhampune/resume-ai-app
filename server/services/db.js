@@ -27,6 +27,28 @@ function initDb() {
       resume_path TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+        db.run(`CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT UNIQUE,
+      password TEXT,
+      name TEXT,
+      email TEXT,
+      mobile TEXT,
+      mobile_verified INTEGER DEFAULT 0,
+      email_verified INTEGER DEFAULT 0
+    )`, (err) => {
+            if (!err) {
+                // Check if admin exists, if not create
+                db.get("SELECT * FROM users WHERE username = ?", ['admin'], (err, row) => {
+                    if (!row) {
+                        db.run("INSERT INTO users (username, password, name, email) VALUES (?, ?, ?, ?)",
+                            ['admin', 'password', 'Administrator', 'admin@resumeai.com']);
+                        console.log("Default admin user created.");
+                    }
+                });
+            }
+        });
     });
 }
 
