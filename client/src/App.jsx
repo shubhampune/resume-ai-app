@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
-import { LayoutDashboard, Search, Upload, FileText, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Search, Upload, FileText, Settings, LogOut, Menu, X } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import UploadZone from './components/UploadZone';
 import ChatSearch from './components/ChatSearch';
@@ -30,6 +30,7 @@ import logo from './assets/logo.png';
 const Sidebar = () => {
   const { logout, user } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const profileRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -49,69 +50,111 @@ const Sidebar = () => {
   }, [showProfileMenu]);
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-header">
-        <div className="logo-box" style={{ backgroundColor: 'transparent', width: 'auto', height: 'auto' }}>
-          <img src={logo} alt="ResumeAI Logo" style={{ height: '40px', width: 'auto' }} />
+    <>
+      {/* Mobile Hamburger Button */}
+      <button
+        className="mobile-menu-btn"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        style={{
+          display: 'none',
+          position: 'fixed',
+          top: '1rem',
+          left: '1rem',
+          zIndex: 1001,
+          padding: '0.75rem',
+          backgroundColor: '#2d4899',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+        }}
+      >
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="mobile-overlay"
+          onClick={() => setIsMobileMenuOpen(false)}
+          style={{
+            display: 'none',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 999
+          }}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="logo-box" style={{ backgroundColor: 'transparent', width: 'auto', height: 'auto' }}>
+            <img src={logo} alt="ResumeAI Logo" style={{ height: '40px', width: 'auto' }} />
+          </div>
         </div>
-      </div>
 
-      <div className="sidebar-nav">
-        <SidebarLink to="/search" icon={Search} label="Candidate Search" />
-        <SidebarLink to="/admin" icon={LayoutDashboard} label="Database" />
-        <SidebarLink to="/upload" icon={Upload} label="Import Resume" />
-        <SidebarLink to="/documentation" icon={FileText} label="Documentation" />
-      </div>
+        <div className="sidebar-nav" onClick={() => setIsMobileMenuOpen(false)}>
+          <SidebarLink to="/search" icon={Search} label="Candidate Search" />
+          <SidebarLink to="/admin" icon={LayoutDashboard} label="Database" />
+          <SidebarLink to="/upload" icon={Upload} label="Import Resume" />
+          <SidebarLink to="/documentation" icon={FileText} label="Documentation" />
+        </div>
 
-      <div className="sidebar-footer">
-        <div className="user-profile-section" style={{ position: 'relative' }} ref={profileRef}>
-          <div
-            className="user-profile-trigger"
-            onClick={() => setShowProfileMenu(!showProfileMenu)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              padding: '0.75rem',
-              cursor: 'pointer',
-              borderRadius: '8px',
-              transition: 'background-color 0.2s'
-            }}
-          >
-            <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              backgroundColor: '#2d4899',
-              color: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: '600',
-              fontSize: '0.875rem'
-            }}>
-              {user?.name?.charAt(0) || 'U'}
-            </div>
-            <div style={{ flex: 1, overflow: 'hidden' }}>
-              <div style={{ fontSize: '0.875rem', fontWeight: '500', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                Admin
+        <div className="sidebar-footer">
+          <div className="user-profile-section" style={{ position: 'relative' }} ref={profileRef}>
+            <div
+              className="user-profile-trigger"
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.75rem',
+                cursor: 'pointer',
+                borderRadius: '8px',
+                transition: 'background-color 0.2s'
+              }}
+            >
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                backgroundColor: '#2d4899',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: '600',
+                fontSize: '0.875rem'
+              }}>
+                {user?.name?.charAt(0) || 'U'}
+              </div>
+              <div style={{ flex: 1, overflow: 'hidden' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: '500', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {user?.name || 'User'}
+                </div>
               </div>
             </div>
           </div>
 
           {showProfileMenu && (
             <div className="profile-menu" style={{
-              position: 'absolute',
-              bottom: '100%',
-              left: '0',
-              width: '100%',
+              position: 'fixed',
+              bottom: '80px',
+              left: '10px',
+              width: '240px',
               backgroundColor: 'white',
               borderRadius: '8px',
               boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06)',
               border: '1px solid #E5E7EB',
               marginBottom: '0.5rem',
-              overflow: 'hidden',
-              zIndex: 50
+              zIndex: 9999
             }}>
               <Link
                 to="/settings"
@@ -153,8 +196,8 @@ const Sidebar = () => {
             </div>
           )}
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };
 

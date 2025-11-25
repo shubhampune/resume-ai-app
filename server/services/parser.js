@@ -14,6 +14,8 @@ async function extractText(filePath, mimeType) {
     } else if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
         const result = await mammoth.extractRawText({ buffer });
         return result.value;
+    } else if (mimeType === 'text/plain') {
+        return buffer.toString('utf-8');
     } else {
         throw new Error('Unsupported file type');
     }
@@ -40,17 +42,22 @@ async function parseResume(text) {
     Return ONLY the JSON object, no markdown formatting.
   `;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const textResponse = response.text();
-
     try {
-        // Clean up markdown code blocks if present
-        const jsonString = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-        return JSON.parse(jsonString);
-    } catch (error) {
-        console.error("Failed to parse LLM response:", textResponse);
-        throw new Error("Failed to parse resume data");
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const textResponse = response.text();
+
+        try {
+            // Clean up markdown code blocks if present
+            const jsonString = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+            return JSON.parse(jsonString);
+        } catch (parseError) {
+            console.error("Failed to parse LLM response:", textResponse);
+            throw new Error("AI response was not valid JSON: " + textResponse.substring(0, 100) + "...");
+        }
+    } catch (apiError) {
+        console.error("Gemini API Error:", apiError);
+        throw new Error("AI Service Error: " + (apiError.message || "Unknown error"));
     }
 }
 

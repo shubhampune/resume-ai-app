@@ -333,3 +333,214 @@ button {
 .menu-item:hover {
   background-color: #F3F4F6;
 }
+
+/* ==================== MOBILE RESPONSIVE STYLES ==================== */
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+
+  /* Show hamburger button on mobile */
+  .mobile-menu-btn {
+    display: block !important;
+  }
+
+  /* Show overlay on mobile when menu is open */
+  .mobile-overlay {
+    display: block !important;
+  }
+
+  /* Hide sidebar by default on mobile */
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  /* Show sidebar when mobile menu is open */
+  .sidebar.mobile-open {
+    left: 0;
+  }
+
+  /* Adjust main content for mobile */
+  .app-container {
+    grid-template-columns: 1fr;
+    padding-left: 0;
+  }
+
+  main {
+    padding: 1rem;
+    margin-top: 60px;
+    /* Space for hamburger button */
+  }
+
+  /* Make page titles smaller on mobile */
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 0.875rem;
+  }
+
+  /* Responsive buttons */
+  .btn-primary,
+  .btn-secondary {
+    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+  }
+
+  /* Responsive input fields */
+  .input-field {
+    font-size: 0.875rem;
+  }
+
+  /* Card adjustments */
+  .card {
+    padding: 1rem;
+  }
+
+  /* Admin Panel - Convert table to cards on mobile */
+  table {
+    display: none;
+  }
+
+  .mobile-candidate-cards {
+    display: block !important;
+  }
+
+  .mobile-candidate-card {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+  }
+
+  .mobile-candidate-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #F3F4F6;
+  }
+
+  .mobile-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .mobile-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+  }
+
+  .mobile-card-label {
+    color: #6B7280;
+    font-weight: 500;
+  }
+
+  .mobile-card-value {
+    color: #111827;
+    font-weight: 600;
+  }
+
+  .mobile-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #F3F4F6;
+  }
+
+  .mobile-card-actions button {
+    flex: 1;
+    padding: 0.625rem;
+    font-size: 0.875rem;
+  }
+
+  /* Search page adjustments */
+  .search-input-container {
+    flex-direction: column;
+  }
+
+  /* Modal adjustments for mobile */
+  .candidate-modal {
+    max-width: 100% !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  /* Make modal content scrollable on mobile */
+  .candidate-modal>div {
+    max-height: 100vh;
+  }
+
+  /* Adjust modal padding for mobile */
+  .candidate-modal>div>div:last-child {
+    padding: 1rem !important;
+  }
+
+  /* Upload zone adjustments */
+  .dropzone {
+    min-height: 200px;
+  }
+
+  /* Flex utilities for mobile */
+  .flex-between {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+
+  /* Hide certain elements on mobile */
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  main {
+    padding: 1.5rem;
+  }
+
+  .page-title {
+    font-size: 1.75rem;
+  }
+}
+
+/* Touch-friendly improvements for all mobile devices */
+@media (hover: none) and (pointer: coarse) {
+
+  /* Increase touch targets */
+  button,
+  .nav-link,
+  .menu-item {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better spacing for touch */
+  .nav-link {
+    padding: 0.875rem 1rem;
+  }
+}

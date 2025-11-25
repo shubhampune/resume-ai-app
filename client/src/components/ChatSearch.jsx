@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Search, ArrowRight, Loader2, MapPin, Briefcase, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import CandidateModal from './CandidateModal';
 
 const ChatSearch = () => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
+    const [selectedCandidate, setSelectedCandidate] = useState(null);
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -194,6 +196,7 @@ const ChatSearch = () => {
                                 className="card"
                                 style={resultCardStyle}
                                 whileHover={{ y: -2, boxShadow: 'var(--shadow-md)' }}
+                                onClick={() => setSelectedCandidate(candidate)}
                             >
                                 <div className="flex-between" style={{ alignItems: 'flex-start' }}>
                                     <div style={{ display: 'flex', gap: '1.25rem' }}>
@@ -248,6 +251,16 @@ const ChatSearch = () => {
                     </div>
                 )}
             </div>
+
+            {/* Candidate Details Modal */}
+            <AnimatePresence>
+                {selectedCandidate && (
+                    <CandidateModal
+                        candidate={selectedCandidate}
+                        onClose={() => setSelectedCandidate(null)}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 };

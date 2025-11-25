@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const { extractText, parseResume } = require('../services/parser');
 const db = require('../services/db');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -203,6 +204,24 @@ router.post('/upload', upload.single('resume'), async (req, res) => {
         // 2. Parse with AI
         const data = await parseResume(text);
 
+        // Check for duplicate candidate
+        if (data.email) {
+            const existingCandidate = await new Promise((resolve, reject) => {
+                db.get("SELECT id FROM candidates WHERE email = ?", [data.email], (err, row) => {
+                    if (err) reject(err);
+                    else resolve(row);
+                });
+            });
+
+            if (existingCandidate) {
+                // Delete the uploaded file since we won't be using it
+                fs.unlink(filePath, (err) => {
+                    if (err) console.error("Error deleting duplicate file:", err);
+                });
+                return res.status(409).json({ error: 'Duplicate: Candidate with this email already exists' });
+            }
+        }
+
         // 3. Save to DB
         const stmt = db.prepare(`
       INSERT INTO candidates (name, email, phone, location, skills, experience_years, education, resume_text, resume_path)
@@ -218,7 +237,7 @@ router.post('/upload', upload.single('resume'), async (req, res) => {
             data.experience_years,
             JSON.stringify(data.education),
             text,
-            filePath,
+            filePath, // Store the path as is (e.g., uploads/filename)
             function (err) {
                 if (err) {
                     console.error(err);

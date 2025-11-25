@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Download, Trash2, Filter, Search, ChevronDown, ChevronRight, X } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import CandidateModal from './CandidateModal';
 
 const AdminPanel = () => {
     const [candidates, setCandidates] = useState([]);
@@ -10,6 +12,7 @@ const AdminPanel = () => {
     const [selectedRole, setSelectedRole] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [expandedCategories, setExpandedCategories] = useState({});
+    const [selectedCandidate, setSelectedCandidate] = useState(null);
     const itemsPerPage = 20;
     const filterRef = React.useRef(null);
 
@@ -410,7 +413,13 @@ const AdminPanel = () => {
                                 const currentItems = filteredCandidates.slice(indexOfFirstItem, indexOfLastItem);
 
                                 return currentItems.map((candidate) => (
-                                    <tr key={candidate.id} style={{ transition: 'background-color 0.2s ease' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                                    <tr
+                                        key={candidate.id}
+                                        style={{ transition: 'background-color 0.2s ease', cursor: 'pointer' }}
+                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
+                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                        onClick={() => setSelectedCandidate(candidate)}
+                                    >
                                         <td style={tableCellStyle}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                                 <div style={avatarStyle}>
@@ -440,7 +449,10 @@ const AdminPanel = () => {
                                             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
                                                 <button
                                                     style={actionButtonStyle}
-                                                    onClick={() => handleView(candidate)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleView(candidate);
+                                                    }}
                                                     title="View Resume"
                                                     onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F3F4F6'; e.currentTarget.style.color = '#2563EB' }}
                                                     onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#6B7280' }}
@@ -452,7 +464,10 @@ const AdminPanel = () => {
                                                 </button>
                                                 <button
                                                     style={actionButtonStyle}
-                                                    onClick={() => handleDownload(candidate)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDownload(candidate);
+                                                    }}
                                                     title="Download Resume"
                                                     onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F3F4F6'; e.currentTarget.style.color = '#2563EB' }}
                                                     onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#6B7280' }}
@@ -461,7 +476,10 @@ const AdminPanel = () => {
                                                 </button>
                                                 <button
                                                     style={actionButtonStyle}
-                                                    onClick={() => handleDelete(candidate.id)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDelete(candidate.id);
+                                                    }}
                                                     title="Delete Candidate"
                                                     onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F3F4F6'; e.currentTarget.style.color = '#DC2626' }}
                                                     onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#6B7280' }}
@@ -476,6 +494,108 @@ const AdminPanel = () => {
                         )}
                     </tbody>
                 </table>
+
+                {/* Mobile Card View - Hidden on desktop, shown on mobile */}
+                <div className="mobile-candidate-cards" style={{ display: 'none' }}>
+                    {loading ? (
+                        <div style={{ padding: '2.5rem', textAlign: 'center', color: '#6B7280' }}>Loading data...</div>
+                    ) : filteredCandidates.length === 0 ? (
+                        <div style={{ padding: '2.5rem', textAlign: 'center', color: '#6B7280' }}>No candidates found.</div>
+                    ) : (
+                        (() => {
+                            const indexOfLastItem = currentPage * itemsPerPage;
+                            const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+                            const currentItems = filteredCandidates.slice(indexOfFirstItem, indexOfLastItem);
+
+                            return currentItems.map((candidate) => (
+                                <div
+                                    key={candidate.id}
+                                    className="mobile-candidate-card"
+                                    onClick={() => setSelectedCandidate(candidate)}
+                                >
+                                    <div className="mobile-card-header">
+                                        <div style={{
+                                            width: '40px',
+                                            height: '40px',
+                                            borderRadius: '50%',
+                                            backgroundColor: '#E5E7EB',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '0.875rem',
+                                            fontWeight: '700',
+                                            color: '#4B5563',
+                                            flexShrink: 0
+                                        }}>
+                                            {candidate.name.charAt(0)}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.125rem' }}>{candidate.name}</div>
+                                            <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>{candidate.email}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mobile-card-body">
+                                        <div className="mobile-card-row">
+                                            <span className="mobile-card-label">Experience</span>
+                                            <span className="mobile-card-value">{candidate.experience_years} Years</span>
+                                        </div>
+                                        <div className="mobile-card-row">
+                                            <span className="mobile-card-label">Location</span>
+                                            <span className="mobile-card-value">{candidate.location}</span>
+                                        </div>
+                                        <div style={{ marginTop: '0.5rem' }}>
+                                            <div className="mobile-card-label" style={{ marginBottom: '0.375rem' }}>Skills</div>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
+                                                {candidate.skills.slice(0, 4).map((skill, i) => (
+                                                    <span key={i} style={{
+                                                        padding: '0.125rem 0.5rem',
+                                                        backgroundColor: '#EFF6FF',
+                                                        color: '#1D4ED8',
+                                                        borderRadius: '4px',
+                                                        fontSize: '0.75rem',
+                                                        fontWeight: '500',
+                                                        border: '1px solid #DBEAFE'
+                                                    }}>
+                                                        {skill}
+                                                    </span>
+                                                ))}
+                                                {candidate.skills.length > 4 && (
+                                                    <span style={{ fontSize: '0.75rem', color: '#9CA3AF', alignSelf: 'center' }}>
+                                                        +{candidate.skills.length - 4}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mobile-card-actions">
+                                        <button
+                                            className="btn-secondary"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleView(candidate);
+                                            }}
+                                            style={{ fontSize: '0.875rem', padding: '0.625rem' }}
+                                        >
+                                            View Resume
+                                        </button>
+                                        <button
+                                            className="btn-secondary"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDownload(candidate);
+                                            }}
+                                            style={{ fontSize: '0.875rem', padding: '0.625rem' }}
+                                        >
+                                            Download
+                                        </button>
+                                    </div>
+                                </div>
+                            ));
+                        })()
+                    )}
+                </div>
             </div>
 
             <div className="flex-between" style={{ marginTop: '1rem', padding: '0 0.25rem', fontSize: '0.875rem', color: '#6B7280' }}>
@@ -497,6 +617,16 @@ const AdminPanel = () => {
                     </button>
                 </div>
             </div>
+
+            {/* Candidate Details Modal */}
+            <AnimatePresence>
+                {selectedCandidate && (
+                    <CandidateModal
+                        candidate={selectedCandidate}
+                        onClose={() => setSelectedCandidate(null)}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 };
